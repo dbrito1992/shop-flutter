@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/pages/product_detail_page.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
@@ -28,7 +29,14 @@ class ProductItem extends StatelessWidget {
             onPressed: () {},
           ),
         ),
-        child: Image.network(product.imageUrl, fit: BoxFit.cover),
+        child: GestureDetector(
+          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          onTap: () {
+            Navigator.of(
+              context,
+            ).pushNamed('/produto-detail', arguments: product);
+          },
+        ),
       ),
     );
   }
