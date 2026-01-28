@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shop/components/product_grid.dart';
-import 'package:shop/models/product_list.dart';
 
 enum FavoritiesActions { all, onlyFavorities }
 
-class ProductOverviewPage extends StatelessWidget {
+class ProductOverviewPage extends StatefulWidget {
   const ProductOverviewPage({super.key});
 
   @override
+  State<ProductOverviewPage> createState() => _ProductOverviewPageState();
+}
+
+class _ProductOverviewPageState extends State<ProductOverviewPage> {
+  bool _isFavorite = false;
+
+  @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProdcutList>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Minha Loja"),
@@ -24,15 +28,21 @@ class ProductOverviewPage extends StatelessWidget {
               ),
             ],
             onSelected: (FavoritiesActions selectedValue) => {
-              if (selectedValue == FavoritiesActions.onlyFavorities)
-                {provider.showIsFavoriteOnly()}
-              else
-                {provider.showAll()},
+              setState(() {
+                if (selectedValue == FavoritiesActions.onlyFavorities) {
+                  _isFavorite = true;
+                } else {
+                  _isFavorite = false;
+                }
+              }),
             },
           ),
         ],
       ),
-      body: Padding(padding: const EdgeInsets.all(10), child: ProductGrid()),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ProductGrid(_isFavorite),
+      ),
     );
   }
 }
