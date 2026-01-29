@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/models/cart.dart';
 import 'package:shop/models/product_list.dart';
+import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/product_detail_page.dart';
 import 'package:shop/pages/product_overview_page.dart';
 import 'package:shop/utils/app_routes.dart';
@@ -14,8 +16,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProdcutList(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProdcutList()),
+        ChangeNotifierProvider(create: (_) => Cart()),
+      ],
       child: MaterialApp(
         theme: ThemeData(
           fontFamily: 'Lato',
@@ -33,11 +38,13 @@ class MyApp extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
-            centerTitle: true,
           ),
         ),
         home: ProductOverviewPage(),
-        routes: {AppRoutes.productDetalRoute: (ctx) => ProductDetailPage()},
+        routes: {
+          AppRoutes.productDetalRoute: (ctx) => ProductDetailPage(),
+          AppRoutes.cartRoute: (ctx) => CartPage(),
+        },
         debugShowCheckedModeBanner: false,
       ),
     );
