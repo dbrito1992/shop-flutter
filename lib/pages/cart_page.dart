@@ -12,51 +12,55 @@ class CartPage extends StatelessWidget {
     final items = cart.items.values.toList();
     return Scaffold(
       appBar: AppBar(title: Text("Carrinho")),
-      body: Column(
-        children: [
-          Card(
-            color: Colors.white,
-            margin: EdgeInsets.all(20),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Total: ", style: TextStyle(fontSize: 20)),
-                  SizedBox(width: 10),
-                  Chip(
-                    color: WidgetStatePropertyAll(
-                      Theme.of(context).colorScheme.primary,
-                    ),
-                    label: Text(
-                      "R\$${cart.totalAmount.toStringAsFixed(2)}",
-                      style: TextStyle(color: Colors.white),
+      body: cart.itemCount > 0
+          ? Column(
+              children: [
+                Card(
+                  color: Colors.white,
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                  elevation: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Total: ", style: TextStyle(fontSize: 20)),
+                        SizedBox(width: 10),
+                        Chip(
+                          color: WidgetStatePropertyAll(
+                            Theme.of(context).colorScheme.primary,
+                          ),
+                          label: Text(
+                            "R\$${cart.totalAmount.toStringAsFixed(2)}",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Spacer(),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            "COMPRAR",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "COMPRAR",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
+                ),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (ctx, i) {
+                      return ItemCartView(item: items[i]);
+                    },
                   ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (ctx, i) {
-                return ItemCartView(item: items[i]);
-              },
-            ),
-          ),
-        ],
-      ),
+                ),
+              ],
+            )
+          : Center(child: Text("Sem itens no carrinho...")),
     );
   }
 }
