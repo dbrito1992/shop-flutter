@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/Bagdee.dart';
+import 'package:shop/components/drawer.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/models/cart.dart';
 import 'package:shop/utils/app_routes.dart';
@@ -58,6 +59,7 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
         padding: const EdgeInsets.all(10),
         child: ProductGrid(_isFavorite),
       ),
+      drawer: AppDrawer(),
     );
   }
 }
