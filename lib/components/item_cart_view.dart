@@ -19,6 +19,28 @@ class ItemCartView extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
         child: Icon(Icons.delete, color: Colors.white, size: 26),
       ),
+      confirmDismiss: (_) {
+        return showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Quer apagar este item?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text("Não"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text("Sim"),
+              ),
+            ],
+          ),
+        );
+      },
       onDismissed: (_) {
         Provider.of<Cart>(context, listen: false).removeItem(item.productId);
       },
