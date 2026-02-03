@@ -10,6 +10,10 @@ class ProdcutList with ChangeNotifier {
   List<Product> get itemsFavorite =>
       _items.where((prod) => prod.isFavorite).toList();
 
+  int get itemCount {
+    return _items.length;
+  }
+
   void addProduct(Product product) {
     _items.add(product);
     notifyListeners();

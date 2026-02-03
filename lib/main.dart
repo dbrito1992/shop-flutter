@@ -5,7 +5,8 @@ import 'package:shop/models/order_list.dart';
 import 'package:shop/models/product_list.dart';
 import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/order_page.dart';
-import 'package:shop/pages/prodcuts.dart';
+import 'package:shop/pages/product_form_page.dart';
+import 'package:shop/pages/products_page.dart';
 import 'package:shop/pages/product_detail_page.dart';
 import 'package:shop/pages/product_overview_page.dart';
 import 'package:shop/utils/app_routes.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Lato',
           colorScheme: .fromSeed(
-            seedColor: Colors.yellow,
+            seedColor: Colors.white,
             primary: Colors.deepOrange,
             secondary: Colors.yellow,
           ),
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.cartRoute: (ctx) => CartPage(),
           AppRoutes.orderRoute: (ctx) => OrderPage(),
           AppRoutes.productRoute: (ctx) => ProdcutsWidget(),
+          AppRoutes.producFormRoute: (ctx) => ProductFormPage(),
         },
         debugShowCheckedModeBanner: false,
       ),
