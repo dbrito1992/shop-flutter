@@ -8,7 +8,7 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Product product = ModalRoute.of(context)!.settings.arguments as Product;
     return Scaffold(
-      appBar: AppBar(title: Text(product.title)),
+      appBar: AppBar(title: Text(product.name)),
       body: Column(
         children: [
           Image.network(

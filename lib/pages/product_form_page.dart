@@ -1,8 +1,7 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/models/product_list.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -36,6 +35,26 @@ class _ProductFormPageState extends State<ProductFormPage> {
     _imageUrlInput.removeListener(updateState);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_formDataInputs.isEmpty) {
+      final arg = ModalRoute.of(context)?.settings.arguments;
+
+      if (arg != null) {
+        final product = arg as Product;
+        _formDataInputs['id'] = product.id;
+        _formDataInputs['name'] = product.name;
+        _formDataInputs['price'] = product.price;
+        _formDataInputs['description'] = product.description;
+        _formDataInputs['imageUrl'] = product.imageUrl;
+
+        _imageUrlInput.text = product.imageUrl;
+      }
+    }
+  }
+
   void updateState() {
     setState(() {});
   }
@@ -57,15 +76,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
     }
 
     _keyForm.currentState!.save();
-    final newProduct = Product(
-      id: Random().nextDouble().toString(),
-      title: _formDataInputs['name'] as String,
-      description: _formDataInputs['description'] as String,
-      price: _formDataInputs['price'] as double,
-      imageUrl: _formDataInputs['url'] as String,
-    );
 
-    print(newProduct.title);
+    Provider.of<ProdcutList>(
+      context,
+      listen: false,
+    ).saveProduct(_formDataInputs);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -82,12 +98,13 @@ class _ProductFormPageState extends State<ProductFormPage> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _formDataInputs['name']?.toString() ?? '',
                 decoration: InputDecoration(label: Text("Nome")),
                 textInputAction: TextInputAction.next,
                 focusNode: _priceFocus,
                 onSaved: (name) => _formDataInputs['name'] = name ?? "-",
-                validator: (_name) {
-                  final name = _name ?? false;
+                validator: (nameParam) {
+                  final name = nameParam ?? false;
 
                   if (name.toString().trim() == '') {
                     return 'Campo nome é obrigatorio';
@@ -97,14 +114,15 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 },
               ),
               TextFormField(
+                initialValue: _formDataInputs['price']?.toString() ?? '',
                 decoration: InputDecoration(label: Text("Preço")),
                 textInputAction: TextInputAction.next,
                 focusNode: _descriptionFocus,
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 onSaved: (price) =>
                     _formDataInputs['price'] = double.parse(price ?? '0'),
-                validator: (_price) {
-                  final price = _price ?? false;
+                validator: (priceParam) {
+                  final price = priceParam ?? false;
 
                   if (price.toString().trim() == '') {
                     return 'Campo preço é obrigatorio';
@@ -114,6 +132,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 },
               ),
               TextFormField(
+                initialValue: _formDataInputs['description']?.toString() ?? '',
                 decoration: InputDecoration(label: Text("Descrição")),
                 textInputAction: TextInputAction.next,
                 focusNode: _imgUrlFocus,
@@ -122,8 +141,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 maxLength: 150,
                 onSaved: (description) =>
                     _formDataInputs['description'] = description ?? "-",
-                validator: (_description) {
-                  final description = _description ?? false;
+                validator: (descriptionParam) {
+                  final description = descriptionParam ?? false;
 
                   if (description.toString().trim() == '') {
                     return 'Campo descrição é obrigatorio';
@@ -142,15 +161,16 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       keyboardType: TextInputType.url,
                       controller: _imageUrlInput,
                       onFieldSubmitted: (_) => onSubmitForm(),
-                      onSaved: (url) => _formDataInputs['url'] = url ?? "-",
-                      validator: (_url) {
-                        final url = _url ?? false;
+                      onSaved: (imageUrl) =>
+                          _formDataInputs['imageUrl'] = imageUrl ?? "-",
+                      validator: (urlParam) {
+                        final imageUrl = urlParam ?? false;
 
-                        if (url.toString().trim() == '') {
+                        if (imageUrl.toString().trim() == '') {
                           return 'Campo url da imagem é obrigatorio';
                         }
 
-                        if (!isValidUrl(url.toString())) {
+                        if (!isValidUrl(imageUrl.toString())) {
                           return 'Url inválida! Extenções aceitas: png, jpg e jpeg.';
                         }
 

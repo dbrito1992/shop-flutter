@@ -27,7 +27,7 @@ class ProductGridItem extends StatelessWidget {
             ),
           ),
           title: Text(
-            product.title,
+            product.name,
             style: TextStyle(color: Colors.white),
             textAlign: TextAlign.center,
           ),

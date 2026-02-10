@@ -37,7 +37,7 @@ class Cart with ChangeNotifier {
         () => CartItem(
           id: Random().nextDouble().toString(),
           productId: product.id,
-          nameProd: product.title,
+          nameProd: product.name,
           quantity: 1,
           price: product.price,
         ),
