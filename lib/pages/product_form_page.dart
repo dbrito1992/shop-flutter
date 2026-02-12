@@ -69,7 +69,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
     return withFile && isWithFileExtension;
   }
 
-  void onSubmitForm() {
+  void onSubmitForm() async {
     final isValid = _keyForm.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -82,17 +82,35 @@ class _ProductFormPageState extends State<ProductFormPage> {
       _isLoading = true;
     });
 
-    Provider.of<ProdcutList>(
-      context,
-      listen: false,
-    ).saveProduct(_formDataInputs).then((value) {
+    try {
+      await Provider.of<ProdcutList>(
+        context,
+        listen: false,
+      ).saveProduct(_formDataInputs);
+
+      if (mounted) Navigator.of(context).pop();
+    } catch (error) {
       if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("Ocorreu um erro!"),
+          content: Text("Ocorreu um erro ao salvar o produto."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    } finally {
       setState(() {
         _isLoading = false;
       });
-
-      Navigator.of(context).pop();
-    });
+    }
   }
 
   @override

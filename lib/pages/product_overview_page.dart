@@ -4,6 +4,7 @@ import 'package:shop/components/Bagdee.dart';
 import 'package:shop/components/drawer.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/models/cart.dart';
+import 'package:shop/models/product_list.dart';
 import 'package:shop/utils/app_routes.dart';
 
 enum FavoritiesActions { all, onlyFavorities }
@@ -17,6 +18,23 @@ class ProductOverviewPage extends StatefulWidget {
 
 class _ProductOverviewPageState extends State<ProductOverviewPage> {
   bool _isFavorite = false;
+  bool _isLoading = true;
+
+  Future<void> _refreshProducts(BuildContext context) {
+    return Provider.of<ProdcutList>(context, listen: false).loadProducts();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProdcutList>(context, listen: false).loadProducts().then((
+      value,
+    ) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +73,14 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: ProductGrid(_isFavorite),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : ProductGrid(_isFavorite),
+        ),
       ),
       drawer: AppDrawer(),
     );
