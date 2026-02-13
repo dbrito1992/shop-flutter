@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/models/cart.dart';
 import 'package:shop/models/cart_item.dart';
 
 class ItemCartView extends StatelessWidget {
   final CartItem item;
-  const ItemCartView({super.key, required this.item});
+  final _formater = NumberFormat.currency(locale: "pt_BR", name: "R\$");
+  ItemCartView({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class ItemCartView extends StatelessWidget {
             ),
           ),
           title: Text(item.nameProd),
-          subtitle: Text("R\$ ${item.price * item.quantity}"),
+          subtitle: Text(_formater.format(item.price * item.quantity)),
           trailing: Text("${item.quantity}X", style: TextStyle(fontSize: 16)),
         ),
       ),

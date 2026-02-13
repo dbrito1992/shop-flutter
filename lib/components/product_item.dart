@@ -15,6 +15,7 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
+    final message = ScaffoldMessenger.of(context);
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(widget.product.imageUrl),
@@ -58,12 +59,18 @@ class _ProductItemState extends State<ProductItem> {
                           ),
                         ],
                       ),
-                    ).then((value) {
+                    ).then((value) async {
                       if (value ?? false) {
-                        Provider.of<ProdcutList>(
-                          context,
-                          listen: false,
-                        ).removeProduct(widget.product);
+                        try {
+                          await Provider.of<ProdcutList>(
+                            context,
+                            listen: false,
+                          ).removeProduct(widget.product);
+                        } catch (error) {
+                          message.showSnackBar(
+                            SnackBar(content: Text(error.toString())),
+                          );
+                        }
                       }
                     });
                   },

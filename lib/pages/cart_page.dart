@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/item_cart_view.dart';
 import 'package:shop/models/cart.dart';
 import 'package:shop/models/order_list.dart';
 
 class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+  final _formater = NumberFormat.currency(locale: "pt_BR", name: "R\$");
+  CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class CartPage extends StatelessWidget {
                             Theme.of(context).colorScheme.primary,
                           ),
                           label: Text(
-                            "R\$${cart.totalAmount.toStringAsFixed(2)}",
+                            _formater.format(cart.totalAmount),
                             style: TextStyle(color: Colors.white),
                           ),
                         ),

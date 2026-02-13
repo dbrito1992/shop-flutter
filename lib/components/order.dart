@@ -12,6 +12,7 @@ class OrderView extends StatefulWidget {
 
 class _OrderViewState extends State<OrderView> {
   bool expanded = false;
+  final _formater = NumberFormat.currency(locale: "pt_BR", name: "R\$");
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,7 +22,7 @@ class _OrderViewState extends State<OrderView> {
           color: Colors.white,
           margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
           child: ListTile(
-            title: Text("R\$ ${widget.order.total.toStringAsFixed(2)}"),
+            title: Text(_formater.format(widget.order.total)),
             subtitle: Text(
               DateFormat("dd/MM/yyyy hh:mm").format(widget.order.date),
             ),
@@ -54,7 +55,7 @@ class _OrderViewState extends State<OrderView> {
                   children: [
                     Text(product.nameProd, style: TextStyle(fontSize: 18)),
                     Text(
-                      "R\$${product.price.toStringAsFixed(2)}X${product.quantity}",
+                      "${_formater.format(product.price)} X${product.quantity}",
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
