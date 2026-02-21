@@ -8,12 +8,15 @@ import 'package:shop/models/product.dart';
 import 'package:shop/utils/constants.dart';
 
 class ProdcutList with ChangeNotifier {
-  final List<Product> _items = [];
+  final String _token;
+  final List<Product> _items;
 
   List<Product> get items => [..._items];
 
   List<Product> get itemsFavorite =>
       _items.where((prod) => prod.isFavorite).toList();
+
+  ProdcutList(this._token, this._items);
 
   int get itemCount {
     return _items.length;
@@ -22,7 +25,7 @@ class ProdcutList with ChangeNotifier {
   Future<void> loadProducts() async {
     _items.clear();
     final response = await http.get(
-      Uri.parse('${Constants.baseUrlProducts}.json'),
+      Uri.parse('${Constants.baseUrlProducts}.json?auth=$_token'),
     );
     if (response.body == 'null') return;
     final Map<String, dynamic> products = jsonDecode(response.body);
@@ -61,7 +64,7 @@ class ProdcutList with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final response = await http.post(
-      Uri.parse('${Constants.baseUrlProducts}.json'),
+      Uri.parse('${Constants.baseUrlProducts}.json?auth=$_token'),
       body: jsonEncode({
         "name": product.name,
         "description": product.description,
@@ -89,7 +92,9 @@ class ProdcutList with ChangeNotifier {
 
     if (index >= 0) {
       await http.patch(
-        Uri.parse('${Constants.baseUrlProducts}/${product.id}.json'),
+        Uri.parse(
+          '${Constants.baseUrlProducts}/${product.id}.json?auth=$_token',
+        ),
         body: jsonEncode({
           "name": product.name,
           "description": product.description,
@@ -114,7 +119,9 @@ class ProdcutList with ChangeNotifier {
       _items.remove(product);
 
       final response = await http.delete(
-        Uri.parse('${Constants.baseUrlProducts}/${product.id}.json'),
+        Uri.parse(
+          '${Constants.baseUrlProducts}/${product.id}.json?auth=$_token',
+        ),
       );
 
       if (response.statusCode >= 400) {

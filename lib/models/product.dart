@@ -26,11 +26,11 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite() async {
+  void toggleFavorite(String token) async {
     _toggleFavorite();
     try {
       final response = await http.patch(
-        Uri.parse('${Constants.baseUrlProducts}/$id.json'),
+        Uri.parse('${Constants.baseUrlProducts}/$id.json?auth=$token'),
         body: jsonEncode({"isFavorite": isFavorite}),
       );
 
