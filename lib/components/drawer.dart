@@ -19,7 +19,9 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text("Home"),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.homeRoute);
+              Navigator.of(
+                context,
+              ).pushReplacementNamed(AppRoutes.authOrHomeRoute);
             },
           ),
           Divider(),
