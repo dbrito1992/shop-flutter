@@ -67,7 +67,7 @@ class _AuthFormState extends State<AuthForm> {
     } on AuthException catch (error) {
       _showError(error.toString());
     } catch (error) {
-      _showError('Ocorreu um erro inesperavel: ' + error.toString());
+      _showError('Ocorreu um erro inesperavel: $error');
     }
 
     setState(() => isLoading = false);

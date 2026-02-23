@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/data/store.dart';
 import 'package:shop/http_exception/auth_exception.dart';
 
 class Auth with ChangeNotifier {
@@ -9,6 +11,8 @@ class Auth with ChangeNotifier {
   String? _token;
   String? _uid;
   DateTime? _expiration;
+  // ignore: unused_field
+  Timer? _timerLogout;
 
   bool get isAuth {
     final isValid = _expiration?.isAfter(DateTime.now()) ?? false;
@@ -54,8 +58,31 @@ class Auth with ChangeNotifier {
         Duration(seconds: int.parse(body['expiresIn'])),
       );
       _token = body['idToken'];
+      Store.saveMap('userData', {
+        'token': _token,
+        'email': _email,
+        'expiration': _expiration!.toIso8601String(),
+        'uId': _uid,
+      });
+      _logoutAuto();
       notifyListeners();
     }
+  }
+
+  Future<void> tryAutoLogin() async {
+    if (isAuth) return;
+
+    final userData = await Store.getMap('userData');
+    if (userData.isEmpty) return;
+
+    final dateExpirated = DateTime.parse(userData['expiration']);
+
+    if (dateExpirated.isBefore(DateTime.now())) return;
+
+    _token = userData['token'];
+    _email = userData['email'];
+    _expiration = dateExpirated;
+    _uid = userData['uId'];
   }
 
   Future<void> register(
@@ -68,5 +95,24 @@ class Auth with ChangeNotifier {
 
   Future<void> login(String email, String password, String urlFragment) async {
     return authenticate(email, password, urlFragment);
+  }
+
+  void logout() {
+    _email = null;
+    _token = null;
+    _uid = null;
+    _expiration = null;
+    clearLogoutTimer();
+    notifyListeners();
+  }
+
+  void clearLogoutTimer() {
+    _timerLogout = null;
+  }
+
+  void _logoutAuto() {
+    clearLogoutTimer();
+    final timeLogout = _expiration?.difference(DateTime.now()).inSeconds;
+    _timerLogout = Timer(Duration(seconds: timeLogout ?? 0), logout);
   }
 }
