@@ -12,11 +12,14 @@ class AuthForm extends StatefulWidget {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with SingleTickerProviderStateMixin {
   AuthMode authMode = AuthMode.login;
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  AnimationController? _controller;
+  Animation<Size>? _animationHeight;
 
   final authData = {"email": "", "password": ""};
 
@@ -74,14 +77,40 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    _animationHeight = Tween(
+      begin: Size(double.infinity, 330),
+      end: Size(double.infinity, 450),
+    ).animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size;
+
+    _animationHeight?.addListener(() => setState(() {}));
     return Card(
       elevation: 9,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: EdgeInsets.all(20),
-        height: authMode == AuthMode.login ? 330 : 470,
+        //height: authMode == AuthMode.login ? 330 : 470,
+        height:
+            _animationHeight?.value.height ??
+            (authMode == AuthMode.login ? 330 : 450),
         width: deviceWidth.width * 0.80,
         child: Form(
           key: formKey,
@@ -151,15 +180,16 @@ class _AuthFormState extends State<AuthForm> {
               Spacer(),
               TextButton(
                 onPressed: () {
-                  if (authMode == AuthMode.login) {
-                    setState(() {
+                  setState(() {
+                    if (authMode == AuthMode.login) {
                       authMode = AuthMode.register;
-                    });
-                  } else {
-                    setState(() {
+                      _controller?.forward();
+                    } else {
                       authMode = AuthMode.login;
-                    });
-                  }
+
+                      _controller?.reverse();
+                    }
+                  });
                 },
                 child: authMode == AuthMode.login
                     ? Text("Registrar")
