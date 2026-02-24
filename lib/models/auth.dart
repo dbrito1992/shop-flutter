@@ -103,7 +103,9 @@ class Auth with ChangeNotifier {
     _uid = null;
     _expiration = null;
     clearLogoutTimer();
-    notifyListeners();
+    Store.remove('userData').then((_) {
+      notifyListeners();
+    });
   }
 
   void clearLogoutTimer() {
