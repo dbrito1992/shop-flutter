@@ -18,8 +18,6 @@ class _AuthFormState extends State<AuthForm>
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
-  AnimationController? _controller;
-  Animation<Size>? _animationHeight;
 
   final authData = {"email": "", "password": ""};
 
@@ -77,40 +75,17 @@ class _AuthFormState extends State<AuthForm>
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-    );
-
-    _animationHeight = Tween(
-      begin: Size(double.infinity, 330),
-      end: Size(double.infinity, 450),
-    ).animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller?.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size;
 
-    _animationHeight?.addListener(() => setState(() {}));
     return Card(
       elevation: 9,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Container(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.bounceIn,
         padding: EdgeInsets.all(20),
-        //height: authMode == AuthMode.login ? 330 : 470,
-        height:
-            _animationHeight?.value.height ??
-            (authMode == AuthMode.login ? 330 : 450),
+        height: authMode == AuthMode.login ? 330 : 470,
         width: deviceWidth.width * 0.80,
         child: Form(
           key: formKey,
@@ -149,23 +124,31 @@ class _AuthFormState extends State<AuthForm>
                   return null;
                 },
               ),
-              if (authMode == AuthMode.register)
-                TextFormField(
-                  decoration: InputDecoration(label: Text("Confirmar Senha")),
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  validator: (value) {
-                    if (value != passwordController.text) {
-                      return "Senhas não são iguais!";
-                    }
+              //if (authMode == AuthMode.register)
+              AnimatedContainer(
+                duration: Duration(milliseconds: 400),
+                height: authMode == AuthMode.register ? 60 : 0,
+                child: AnimatedOpacity(
+                  opacity: authMode == AuthMode.register ? 1.0 : 0.0,
+                  duration: Duration(milliseconds: 500),
+                  child: TextFormField(
+                    decoration: InputDecoration(label: Text("Confirmar Senha")),
+                    keyboardType: TextInputType.text,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value != passwordController.text) {
+                        return "Senhas não são iguais!";
+                      }
 
-                    if (value!.trim().isEmpty) {
-                      return "Senha inválida!";
-                    }
+                      if (value!.trim().isEmpty) {
+                        return "Senha inválida!";
+                      }
 
-                    return null;
-                  },
+                      return null;
+                    },
+                  ),
                 ),
+              ),
 
               SizedBox(
                 child: isLoading == true
@@ -183,11 +166,8 @@ class _AuthFormState extends State<AuthForm>
                   setState(() {
                     if (authMode == AuthMode.login) {
                       authMode = AuthMode.register;
-                      _controller?.forward();
                     } else {
                       authMode = AuthMode.login;
-
-                      _controller?.reverse();
                     }
                   });
                 },
