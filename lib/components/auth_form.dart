@@ -85,7 +85,7 @@ class _AuthFormState extends State<AuthForm>
         duration: Duration(milliseconds: 300),
         curve: Curves.bounceIn,
         padding: EdgeInsets.all(20),
-        height: authMode == AuthMode.login ? 330 : 470,
+        height: authMode == AuthMode.login ? 350 : 470,
         width: deviceWidth.width * 0.80,
         child: Form(
           key: formKey,
@@ -136,14 +136,17 @@ class _AuthFormState extends State<AuthForm>
                     keyboardType: TextInputType.text,
                     obscureText: true,
                     validator: (value) {
-                      if (value != passwordController.text) {
-                        return "Senhas não são iguais!";
-                      }
+                      if (authMode == AuthMode.register) {
+                        if (value != passwordController.text) {
+                          return "Senhas não são iguais!";
+                        }
 
-                      if (value!.trim().isEmpty) {
-                        return "Senha inválida!";
-                      }
+                        if (value!.trim().isEmpty) {
+                          return "Senha inválida!";
+                        }
 
+                        return null;
+                      }
                       return null;
                     },
                   ),
