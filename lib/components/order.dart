@@ -15,6 +15,7 @@ class _OrderViewState extends State<OrderView> {
   final _formater = NumberFormat.currency(locale: "pt_BR", name: "R\$");
   @override
   Widget build(BuildContext context) {
+    final heigthItems = (widget.order.product.length * 24) + 10.0;
     return Column(
       children: [
         Card(
@@ -36,33 +37,33 @@ class _OrderViewState extends State<OrderView> {
             ),
           ),
         ),
-        if (expanded)
-          Container(
-            height: (widget.order.product.length * 24) + 10,
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-              ),
-              color: Colors.white,
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          height: expanded ? heigthItems : 0,
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
             ),
-            child: ListView(
-              children: widget.order.product.map((product) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(product.nameProd, style: TextStyle(fontSize: 18)),
-                    Text(
-                      "${_formater.format(product.price)} X${product.quantity}",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
+            color: Colors.white,
           ),
+          child: ListView(
+            children: widget.order.product.map((product) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(product.nameProd, style: TextStyle(fontSize: 18)),
+                  Text(
+                    "${_formater.format(product.price)} X${product.quantity}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
